@@ -29,8 +29,8 @@ function addGrade() {
     }
     if(!totalPoints) return;
     totalPoints = parseFloat(totalPoints);
-    var earnedPoints = -1;
-    while((earnedPoints < 0 || !isNumber(earnedPoints)) && earnedPoints !== null) {
+    var earnedPoints;
+    while((!isNumber(earnedPoints)) && earnedPoints !== null) {
         earnedPoints = window.prompt("Please enter the earned points for the assignment:")
     }
     if(!earnedPoints) return;
@@ -101,8 +101,9 @@ function addGrade() {
 }
 function editWrapper() {
     var assName = window.prompt("Please enter the assignment name EXACT:");
-    var earnedPoints = -1;
-    while(earnedPoints < 0 || !isNumber(earnedPoints)) {
+    if(!assName) return;
+    var earnedPoints;
+    while(!isNumber(earnedPoints)) {
         earnedPoints = window.prompt("Please enter the earned points for the assignment:")
     }
     editGrade(assName, earnedPoints);
@@ -110,6 +111,7 @@ function editWrapper() {
 
 function dropWrapper() {
     var assName = window.prompt("Please enter the assignment name EXACT:");
+    if(!assName) return;
     editGrade(assName, 0, 0);
 }
 
