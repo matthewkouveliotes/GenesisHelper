@@ -138,7 +138,9 @@ function calcGrade() {
         var points = tds[i].children[2].innerText.trim();
         var assWeight = 1;
         if(tds[i].children[2].children.length > 1 && tds[i].children[2].children[1].className !== "icon") {
-            assWeight = parseFloat(tds[i].children[2].children[0].innerText.substring(1));
+            if(tds[i].children[2].children[0].innerText === "Not Counted") assWeight = 0;
+            else
+                assWeight = parseFloat(tds[i].children[2].children[0].innerText.substring(1));
         }
         var maxPoints = assWeight * parseFloat(points.substring(points.indexOf("/") + 2));
         var earnedPoints = assWeight * parseFloat(points.substring(0, points.indexOf("/") - 1));
