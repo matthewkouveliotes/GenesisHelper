@@ -2,10 +2,12 @@ const tables = document.querySelectorAll("table.notecard");
 const table = tables[1];
 const rows = table.querySelectorAll("tbody tr")[1].querySelectorAll("td table tbody")[0];
 const tds = rows.children;
-tds[tds.length - 3].querySelector("td").innerHTML += '<br><div><button id="addGrade">Add Grade</button><button id="editGrade">Edit Grade</button></div>'
+tds[tds.length - 3].querySelector("td").innerHTML += '<br><div><button id="addGrade" class="genesisButton">Add Grade</button><button id="editGrade" class="genesisButton">Edit Grade</button><button id="dropGrade" class="genesisButton">Drop Grade</button><button id="unround" class="genesisButton">Unround Grade</button></div>'
 
 document.getElementById("addGrade").addEventListener("click", function() {addGrade();});
-document.getElementById("editGrade").addEventListener("click", function() {editGrade();});
+document.getElementById("editGrade").addEventListener("click", function() {editWrapper();});
+document.getElementById("dropGrade").addEventListener("click", function() {dropWrapper();})
+document.getElementById("unround").addEventListener("click", function() {calcGrade();})
 const catTable = tds[tds.length-2].querySelector("td div table tbody").children;
 const categories = new Map();
 for(var i = 2; i < catTable.length; i++) {
@@ -35,6 +37,8 @@ function addGrade() {
     else
         newClassName = "listrowodd";
     var element = document.createElement('tr')
+    if(tds[2].innerText === "No graded assignments found for this course")
+        tds[2].remove();
     rows.insertBefore(element, tds[tds.length-3]);
     element.className = newClassName;
     element.style.height = "25px";
@@ -79,18 +83,31 @@ function addGrade() {
 
 
 }
-
-function editGrade() {
-    var assName = window.prompt("Type the EXACT assignment name:");
+function editWrapper() {
+    var assName = window.prompt("Please enter the assignment name EXACT:");
     var earnedPoints = -1;
     while(earnedPoints < 0 || !isNumber(earnedPoints)) {
-        earnedPoints = parseFloat(window.prompt("Please enter the earned points for the assignment:"))
+        earnedPoints = window.prompt("Please enter the earned points for the assignment:")
     }
+    editGrade(assName, earnedPoints);
+}
+
+function dropWrapper() {
+    var assName = window.prompt("Please enter the assignment name EXACT:");
+    editGrade(assName, 0, 0);
+}
+
+function editGrade(name, earned, max) {
+    var assName = name;
+    var earnedPoints = earned;
     for(var i = 2; i < tds.length - 3; i++) {
         var name = tds[i].children[1].innerText;
         if(name.split("\n")[1] === assName) {
             var points = tds[i].children[2].innerText.trim();
-            var totalPoints = parseFloat(points.substring(points.indexOf("/") + 2));
+            var totalPoints = max
+            if(max === undefined) {
+                totalPoints = parseFloat(points.substring(points.indexOf("/") + 2));
+            }
             tds[i].children[2].innerHTML = `<td class="cellLeft" nowrap="">
 
                                                                                              ` + earnedPoints + `
@@ -134,11 +151,18 @@ function calcGrade() {
         gradeMapEarned.set(cat, gradeMapEarned.get(cat) + earnedPoints);
         gradeMapMax.set(cat, gradeMapMax.get(cat) + maxPoints);
     }
-    var totalScore = 0;
+    var sumOfCatScores = 0;
+    var sumOfCatWeights = 0;
     for(const key of categories.keys()) {
-        totalScore += (parseFloat(gradeMapEarned.get(key)) / parseFloat(gradeMapMax.get(key))) * (categories.get(key).replaceAll("%","") / 100)
+        if(parseFloat(gradeMapMax.get(key)) !== 0.0) {
+            sumOfCatWeights += parseFloat(categories.get(key).replaceAll("%",""));
+            var catAverage = (parseFloat(gradeMapEarned.get(key)) / parseFloat(gradeMapMax.get(key))) * 100
+            sumOfCatScores +=  catAverage * parseFloat(categories.get(key).replaceAll("%","") / 100);
+        }
+
+
     }
-    totalScore *= 100;
+    var totalScore = (sumOfCatScores * 100) / sumOfCatWeights;
     totalScore = Number(totalScore.toFixed(2));
     var letterGrade = "";
     if(totalScore >= 96.5) letterGrade = "A+";
