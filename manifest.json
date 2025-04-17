@@ -15,8 +15,5 @@
         "https://parents.c1.genesisedu.net/freeholdregional/parents?tab1=studentdata&tab2=gradebook&tab3=coursesummary*"
       ]
     }
-  ],
-  "background": {
-    "service_worker": "edit.js"
-  }
+  ]
 }

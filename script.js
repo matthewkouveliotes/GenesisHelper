@@ -2,8 +2,10 @@ const tables = document.querySelectorAll("table.notecard");
 const table = tables[1];
 const rows = table.querySelectorAll("tbody tr")[1].querySelectorAll("td table tbody")[0];
 const tds = rows.children;
-tds[tds.length - 3].querySelector("td").innerHTML += '<br><div><button id="addGrade">Add Grade</button></div>'
+tds[tds.length - 3].querySelector("td").innerHTML += '<br><div><button id="addGrade">Add Grade</button><button id="editGrade">Edit Grade</button></div>'
+
 document.getElementById("addGrade").addEventListener("click", function() {addGrade();});
+document.getElementById("editGrade").addEventListener("click", function() {editGrade();});
 const catTable = tds[tds.length-2].querySelector("td div table tbody").children;
 const categories = new Map();
 for(var i = 2; i < catTable.length; i++) {
@@ -75,6 +77,36 @@ function addGrade() {
                                               </td>`
     calcGrade();
 
+
+}
+
+function editGrade() {
+    var assName = window.prompt("Type the EXACT assignment name:");
+    var earnedPoints = -1;
+    while(earnedPoints < 0 || !isNumber(earnedPoints)) {
+        earnedPoints = parseFloat(window.prompt("Please enter the earned points for the assignment:"))
+    }
+    for(var i = 2; i < tds.length - 3; i++) {
+        var name = tds[i].children[1].innerText;
+        if(name.split("\n")[1] === assName) {
+            var points = tds[i].children[2].innerText.trim();
+            var totalPoints = parseFloat(points.substring(points.indexOf("/") + 2));
+            tds[i].children[2].innerHTML = `<td class="cellLeft" nowrap="">
+
+                                                                                             ` + earnedPoints + `
+
+                                                                                                 / ` + totalPoints + `
+
+                                                                                                 <div style="font-weight: bold;">
+                                                                                                     ` + (Number((earnedPoints/totalPoints)*100).toFixed(2)) + `%
+                                                                                                 </div>
+
+                                                                                         </td>`
+            calcGrade();
+            return;
+        }
+    }
+    window.alert("Assignment Not Found - please check spelling and capitalization")
 
 }
 
