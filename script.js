@@ -19,18 +19,24 @@ function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 function addGrade() {
     var cat = "";
-    while(!categories.has(cat)) {
+    while(!categories.has(cat) && cat !== "Extra Credit" && cat !== null) {
         cat = window.prompt("Please type which category:")
     }
+    if(!cat) return;
     var totalPoints = -1;
-    while(totalPoints < 0 || !isNumber(totalPoints)) {
-        totalPoints = parseFloat(window.prompt("Please enter the maximum points for the assignment:"))
+    while((totalPoints < 0 || !isNumber(totalPoints)) && totalPoints !== null && cat !== "Extra Credit") {
+        totalPoints = window.prompt("Please enter the maximum points for the assignment:")
     }
+    if(!totalPoints) return;
+    totalPoints = parseFloat(totalPoints);
     var earnedPoints = -1;
-    while(earnedPoints < 0 || !isNumber(earnedPoints)) {
-            earnedPoints = parseFloat(window.prompt("Please enter the earned points for the assignment:"))
+    while((earnedPoints < 0 || !isNumber(earnedPoints)) && earnedPoints !== null) {
+        earnedPoints = window.prompt("Please enter the earned points for the assignment:")
     }
+    if(!earnedPoints) return;
+    earnedPoints = parseFloat(earnedPoints)
     var assignmentName = window.prompt("Please enter the assignment name:")
+    if(!assignmentName) return;
     var newClassName = "";
     if(tds[tds.length-4].className === "listrowodd")
         newClassName = "listroweven";
@@ -68,7 +74,8 @@ function addGrade() {
                                                 <b>` + assignmentName +`</b>
 
                                          </td>`
-    element.innerHTML += `<td class="cellLeft" nowrap="">
+    if(cat !== "Extra Credit") {
+        element.innerHTML += `<td class="cellLeft" nowrap="">
 
                                                   ` + earnedPoints + `
 
@@ -79,6 +86,15 @@ function addGrade() {
                                                       </div>
 
                                               </td>`
+    }
+    else {
+        element.innerHTML += `<td class="cellLeft" nowrap="">
+
+                                                      ` + earnedPoints + `
+
+
+                                                  </td>`
+    }
     calcGrade();
 
 
@@ -134,6 +150,7 @@ function calcGrade() {
         gradeMapMax.set(key, 0);
         gradeMapEarned.set(key, 0);
     }
+    var extraCredit = 0.0;
     for(var i = 2; i < tds.length-3; i++) {
         var points = tds[i].children[2].innerText.trim();
         var assWeight = 1;
@@ -142,6 +159,14 @@ function calcGrade() {
             else
                 assWeight = parseFloat(tds[i].children[2].children[0].innerText.substring(1));
         }
+        if(points.split("\n")[0] === "Exempt") {
+            continue;
+        }
+        var cat = tds[i].children[1].children[1].innerText;
+        if(cat === "Extra Credit") {
+            extraCredit+= parseFloat(points);
+            continue;
+        }
         var maxPoints = assWeight * parseFloat(points.substring(points.indexOf("/") + 2));
         var earnedPoints = assWeight * parseFloat(points.substring(0, points.indexOf("/") - 1));
         if(!isNumber(earnedPoints)) {
@@ -149,9 +174,10 @@ function calcGrade() {
             var score = arr[arr.length -1];
             earnedPoints = (parseFloat(score)/100) * maxPoints;
         }
-        var cat = tds[i].children[1].children[1].innerText;
-        gradeMapEarned.set(cat, gradeMapEarned.get(cat) + earnedPoints);
-        gradeMapMax.set(cat, gradeMapMax.get(cat) + maxPoints);
+        if(isNumber(earnedPoints)) {
+            gradeMapEarned.set(cat, gradeMapEarned.get(cat) + earnedPoints);
+            gradeMapMax.set(cat, gradeMapMax.get(cat) + maxPoints);
+        }
     }
     var sumOfCatScores = 0;
     var sumOfCatWeights = 0;
@@ -164,8 +190,8 @@ function calcGrade() {
 
 
     }
-    var totalScore = (sumOfCatScores * 100) / sumOfCatWeights;
-    totalScore = Number(totalScore.toFixed(2));
+    var totalScore = ((sumOfCatScores * 100) / sumOfCatWeights);
+    totalScore = Number(totalScore.toFixed(2)) + extraCredit;
     var letterGrade = "";
     if(totalScore >= 96.5) letterGrade = "A+";
     else if(totalScore >=93.5) letterGrade = "A";
