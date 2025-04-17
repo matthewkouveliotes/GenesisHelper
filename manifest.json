@@ -1,0 +1,22 @@
+{
+  "name": "Genesis Helper",
+  "description": "Predict Grades with Ease",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "helper.html",
+    "default_icon": "logo.png"
+  },
+  "permissions": ["storage", "activeTab", "declarativeContent", "contextMenus"],
+  "content_scripts": [
+    {
+      "js": ["script.js"],
+      "matches": [
+        "https://parents.c1.genesisedu.net/freeholdregional/parents?tab1=studentdata&tab2=gradebook&tab3=coursesummary*"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "edit.js"
+  }
+}
