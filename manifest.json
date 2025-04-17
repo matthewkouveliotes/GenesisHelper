@@ -5,9 +5,9 @@
   "manifest_version": 3,
   "action": {
     "default_popup": "helper.html",
-    "default_icon": "logo.png"
+    "default_icon": "logos/logo128.png"
   },
-  "permissions": ["storage", "activeTab", "declarativeContent", "contextMenus"],
+  "permissions": ["activeTab", "declarativeContent"],
   "content_scripts": [
     {
       "js": ["script.js"],
@@ -15,5 +15,8 @@
         "https://parents.c1.genesisedu.net/freeholdregional/parents?tab1=studentdata&tab2=gradebook&tab3=coursesummary*"
       ]
     }
-  ]
+  ],
+  "icons": { "16": "logos/logo16.png",
+    "48": "logos/logo48.png",
+    "128": "logos/logo128.png" }
 }
