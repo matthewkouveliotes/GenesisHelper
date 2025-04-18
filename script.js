@@ -126,7 +126,10 @@ function editGrade(name, earned, max) {
             if(max === undefined) {
                 totalPoints = parseFloat(points.substring(points.indexOf("/") + 2));
             }
-            tds[i].children[2].innerHTML = `<td class="cellLeft" nowrap="">
+            if(tds[i].children[2].children.length > 1 && tds[i].children[2].children[1].className !== "icon") {
+                var assWeight = tds[i].children[2].children[0].innerText;
+                tds[i].children[2].innerHTML = `<td class="cellLeft" nowrap="">
+                    <div style="font-size:7pt;cursor:help;" title="Assignment Weight: ` + assWeight + `" onclick="alertDialog('Assignment Weight: ` + assWeight + `');"><span style="color:blue; font-weight: bold;"> ` + assWeight +`</span></div>
 
                                                                                              ` + earnedPoints + `
 
@@ -137,6 +140,20 @@ function editGrade(name, earned, max) {
                                                                                                  </div>
 
                                                                                          </td>`
+            }
+            else {
+                tds[i].children[2].innerHTML = `<td class="cellLeft" nowrap="">
+
+                                                                                             ` + earnedPoints + `
+
+                                                                                                 / ` + totalPoints + `
+
+                                                                                                 <div style="font-weight: bold;">
+                                                                                                     ` + (Number((earnedPoints/totalPoints)*100).toFixed(2)) + `%
+                                                                                                 </div>
+
+                                                                                         </td>`
+            }
             calcGrade();
             return;
         }
