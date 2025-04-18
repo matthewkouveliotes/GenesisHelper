@@ -175,7 +175,7 @@ function calcGrade() {
         var assWeight = 1;
         if(tds[i].children[2].children.length > 1 && tds[i].children[2].children[1].className !== "icon") {
             if(tds[i].children[2].children[0].innerText === "Not Counted") assWeight = 0;
-            else
+            else if(isNumber(tds[i].children[2].children[0].innerText.substring(1)))
                 assWeight = parseFloat(tds[i].children[2].children[0].innerText.substring(1));
         }
         if(points.split("\n")[0] === "Exempt") {
