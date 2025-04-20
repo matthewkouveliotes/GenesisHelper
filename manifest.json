@@ -7,7 +7,7 @@
     "default_popup": "helper.html",
     "default_icon": "logos/logo128.png"
   },
-  "permissions": ["activeTab", "declarativeContent"],
+  "permissions": [],
   "content_scripts": [
     {
       "js": ["script.js"],
